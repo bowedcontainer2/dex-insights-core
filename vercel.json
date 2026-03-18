@@ -5,7 +5,7 @@
   "devCommand": "cd client && vite --port $PORT",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/((?!api/|src/|@|node_modules/).*)", "destination": "/index.html" }
   ],
   "functions": {
     "api/glucose/egvs.ts": {
