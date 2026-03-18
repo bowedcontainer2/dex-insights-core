@@ -1,0 +1,65 @@
+.panel {
+  border: var(--border-thin);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--bg-panel);
+  position: relative;
+}
+
+.header {
+  padding: 0.75rem 1rem;
+  border-bottom: var(--border-thin);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  background-color: var(--bg-panel-header);
+}
+
+.body {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.emptyState {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Tablet: panels that span 4 become half-width (4 of 8), span 8 stays full */
+@media (max-width: 1024px) {
+  .panel {
+    min-height: 0;
+  }
+
+  .body {
+    padding: 1.25rem;
+  }
+}
+
+/* Mobile: all panels go full width, override inline grid positioning */
+@media (max-width: 640px) {
+  .panel {
+    grid-column: 1 / -1 !important;
+    grid-row: auto !important;
+  }
+
+  .header {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .body {
+    padding: 1rem;
+  }
+}

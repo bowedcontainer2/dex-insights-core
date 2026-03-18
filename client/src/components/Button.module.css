@@ -1,0 +1,46 @@
+.button {
+  padding: 0.75rem 1.25rem;
+  text-transform: uppercase;
+  font-family: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: inherit;
+  border: var(--border-thin);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.outline {
+  background: transparent;
+  color: var(--fg);
+}
+
+.outline:hover:not(:disabled) {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.solid {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.solid:hover:not(:disabled) {
+  background: transparent;
+  color: var(--fg);
+}
+
+.inverted {
+  background: transparent;
+  color: var(--bg);
+  border-color: var(--bg);
+}
+
+.inverted:hover:not(:disabled) {
+  background: var(--bg);
+  color: var(--accent);
+}

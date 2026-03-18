@@ -1,0 +1,14 @@
+{
+  "buildCommand": "cd client && npm run build",
+  "outputDirectory": "client/dist",
+  "framework": "vite",
+  "devCommand": "cd client && vite --port $PORT",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ],
+  "functions": {
+    "api/glucose/egvs.ts": {
+      "maxDuration": 30
+    }
+  }
+}

@@ -1,0 +1,31 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0;
+  margin-top: 2rem;
+  border-top: 1px solid var(--bg-panel-border);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.brand {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.links a:hover {
+  color: var(--fg);
+  text-decoration: underline;
+}

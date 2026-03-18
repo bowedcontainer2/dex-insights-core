@@ -1,0 +1,98 @@
+.star {
+  position: absolute;
+  right: -10%;
+  top: -5%;
+  width: 70%;
+  height: 110%;
+  opacity: 0.1;
+  z-index: 1;
+  pointer-events: none;
+  color: var(--accent);
+}
+
+.reading {
+  font-size: var(--reading-size);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 0.85;
+  margin-top: auto;
+}
+
+.trend {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.stale {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--color-urgent);
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+/* ── Skeleton Loading ───────────────────────────── */
+
+.skeletonReading {
+  width: 60%;
+  max-width: 200px;
+  height: 0.85em;
+  background: rgba(61, 50, 42, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 25%,
+    rgba(61, 50, 42, 0.15) 50%,
+    transparent 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmerMove 2s infinite linear;
+}
+
+@keyframes shimmerMove {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.ledRow {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.ledDot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border: 2px solid var(--fg);
+  background: rgba(61, 50, 42, 0.1);
+  animation: ledSeq 1.6s infinite;
+}
+
+@keyframes ledSeq {
+  0%, 100% { background-color: rgba(61, 50, 42, 0.1); }
+  50% { background-color: var(--accent); }
+}
+
+@media (max-width: 640px) {
+  .reading {
+    font-size: clamp(4rem, 15vw, 6rem);
+  }
+
+  .trend {
+    font-size: 1rem;
+    gap: 0.5rem;
+  }
+}
