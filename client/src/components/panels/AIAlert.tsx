@@ -51,7 +51,7 @@ export default function AIAlert({ patterns, insight }: Props) {
     ? todayPatterns.sort((a, b) => b.conviction - a.conviction)[0]
     : patterns.sort((a, b) => b.conviction - a.conviction)[0] ?? null;
 
-  const title = useLlm ? 'AI Daily Briefing' : (topPattern ? PATTERN_TITLES[topPattern.type] : 'No Alerts');
+  const title = useLlm ? 'Today\'s Read' : (topPattern ? PATTERN_TITLES[topPattern.type] : 'No Alerts');
   const subtitle = useLlm ? null : (topPattern ? 'Pattern Alert' : 'AI Predictive Model');
   const body = useLlm
     ? insight!.alert
