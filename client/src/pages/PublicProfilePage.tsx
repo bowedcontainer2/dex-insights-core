@@ -103,8 +103,8 @@ export default function PublicProfilePage() {
         <CurrentGlucose reading={currentReading} stale={stale} loading={false} />
         <AIAlert patterns={data.patterns} insight={data.insight} />
         <Chart24Hr egvs={data.egvs} loading={false} hours={chartHours} onHoursChange={setChartHours} todayStats={data.todayStats} />
-        <DaySummary insight={data.insight} />
         <ActionableInsight patterns={data.patterns} insight={data.insight} />
+        <DaySummary insight={data.insight} />
         <Patterns patterns={data.patterns} daysWithData={data.windowStats?.length ?? 0} />
       </Dashboard>
       <Footer />
