@@ -18,7 +18,7 @@ export const config = {
   openai: {
     apiKey: process.env.OPENAI_API_KEY || '',
     model: process.env.OPENAI_MODEL || 'gpt-5-mini',
-    maxTokens: 1024,
+    maxTokens: 16384,
   },
   port: parseInt(process.env.PORT || '3001', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
