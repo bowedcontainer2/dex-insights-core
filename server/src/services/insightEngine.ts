@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import { config } from '../config.js';
 import { getReadingsByRange } from './readingStore.js';
 import { getPatternEventsByRange, getDailyStatsByRange } from './patternStore.js';
@@ -58,12 +58,10 @@ export function buildPromptData() {
   const patternEvents = getPatternEventsByRange(sevenDaysAgo, today);
   const patternSummaries = buildPatternSummaries(patternEvents, dailyStats.length, today);
 
-  // Previous LLM insights (up to 7 days, excluding today)
   const yesterday = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
   const eightDaysAgo = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
   const previousInsights = getInsightsByRange(eightDaysAgo, yesterday);
 
-  // Compact readings to save tokens
   const compactReadings = readings.map((r) => ({
     v: r.value,
     t: r.trend,
@@ -83,37 +81,37 @@ export function buildPromptData() {
 }
 
 export async function generateInsights(): Promise<void> {
-  if (!config.anthropic.apiKey) return;
+  if (!config.openai.apiKey) return;
 
   const today = new Date().toISOString().slice(0, 10);
 
-  // Already generated today?
   const existing = getInsightForDate(today);
   if (existing) return;
 
   const promptData = buildPromptData();
 
-  // Need some data to analyze
   if (promptData.readings.length === 0) return;
 
-  const client = new Anthropic({ apiKey: config.anthropic.apiKey });
+  const client = new OpenAI({ apiKey: config.openai.apiKey });
   const userMessage = JSON.stringify(promptData);
 
-  const response = await client.messages.create({
-    model: config.anthropic.model,
-    max_tokens: config.anthropic.maxTokens,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: userMessage }],
+  const response = await client.chat.completions.create({
+    model: config.openai.model,
+    max_tokens: config.openai.maxTokens,
+    messages: [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: userMessage },
+    ],
   });
 
-  const textBlock = response.content.find((b) => b.type === 'text');
-  if (!textBlock || textBlock.type !== 'text') {
-    throw new Error('No text response from Claude');
+  const text = response.choices[0]?.message?.content;
+  if (!text) {
+    throw new Error('No text response from OpenAI');
   }
 
-  const parsed = JSON.parse(textBlock.text);
+  const parsed = JSON.parse(text);
   if (!parsed.alert || !parsed.recommendation || !parsed.daySummary) {
-    throw new Error('Invalid response structure from Claude');
+    throw new Error('Invalid response structure from OpenAI');
   }
 
   storeInsight({
@@ -122,11 +120,11 @@ export async function generateInsights(): Promise<void> {
     recommendationText: parsed.recommendation,
     daySummaryText: parsed.daySummary,
     promptData: userMessage,
-    model: config.anthropic.model,
-    inputTokens: response.usage?.input_tokens,
-    outputTokens: response.usage?.output_tokens,
+    model: config.openai.model,
+    inputTokens: response.usage?.prompt_tokens,
+    outputTokens: response.usage?.completion_tokens,
   });
 
-  const totalTokens = (response.usage?.input_tokens ?? 0) + (response.usage?.output_tokens ?? 0);
+  const totalTokens = response.usage?.total_tokens ?? 0;
   console.log(`Generated LLM insight (${totalTokens} tokens)`);
 }

@@ -15,7 +15,8 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.79.0",
     "@supabase/supabase-js": "^2.49.0",
-    "@vercel/functions": "^1.5.0"
+    "@vercel/functions": "^1.5.0",
+    "openai": "^6.32.0"
   },
   "devDependencies": {
     "@vercel/node": "^5.1.0",
