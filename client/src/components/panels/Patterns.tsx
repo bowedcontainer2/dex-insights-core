@@ -96,7 +96,7 @@ interface Props {
 
 export default function Patterns({ patterns, daysWithData }: Props) {
   return (
-    <Panel gridColumn="span 4" gridRow="span 2">
+    <Panel gridColumn="span 4" gridRow="span 3">
       <PanelHeader>Identified Patterns</PanelHeader>
       <PanelBody>
         {daysWithData < 1 ? (
