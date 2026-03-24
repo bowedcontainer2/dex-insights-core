@@ -97,7 +97,7 @@ export async function generateInsights(userId: string, timezone: string): Promis
 
   const response = await client.chat.completions.create({
     model: config.openai.model,
-    max_tokens: config.openai.maxTokens,
+    max_completion_tokens: config.openai.maxTokens,
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
       { role: 'user', content: userMessage },
