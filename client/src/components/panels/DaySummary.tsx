@@ -10,7 +10,7 @@ export default function DaySummary({ insight }: Props) {
   if (!insight || insight.source !== 'llm' || !insight.daySummary) return null;
 
   return (
-    <Panel gridColumn="5 / span 8" gridRow="span 1">
+    <Panel gridColumn="5 / -1" gridRow="span 1">
       <PanelHeader>Yesterday's Recap</PanelHeader>
       <PanelBody style={{ justifyContent: 'center' }}>
         <p className={styles.text}>{insight.daySummary}</p>
