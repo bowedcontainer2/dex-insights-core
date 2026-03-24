@@ -60,6 +60,7 @@ function formatMagnitude(p: PatternSummary): { value: string; unit: string } {
 }
 
 function formatContext(p: PatternSummary): string {
+  if (p.avgMagnitude == null || isNaN(p.avgMagnitude)) return '';
   const avg = Math.round(p.avgMagnitude);
   const latest = Math.round(p.latestEvent?.magnitude ?? 0);
   const unit = MAGNITUDE_UNITS[p.type];

@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAuth, AuthError } from '../lib/auth.js';
 import { getPatternEventsByRange, getDailyStatsByRange } from '../lib/patternStore.js';
+import { getSeverity } from '../lib/patternEngine.js';
 import type { PatternType, PatternSummary, PatternsResponse } from '../shared/types.js';
 
 const ALL_PATTERN_TYPES: PatternType[] = [
@@ -35,6 +36,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const daysWithData = windowStats.length;
 
+    const SEVERITY_ORDER = { severe: 0, moderate: 1, mild: 2 } as const;
+
     const summaries: PatternSummary[] = ALL_PATTERN_TYPES
       .map((type): PatternSummary => {
         const typeEvents = events.filter((e) => e.patternType === type);
@@ -44,6 +47,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const todayDetected = uniqueDates.has(today);
         const latestEvent = typeEvents[0];
 
+        const avgMagnitude = typeEvents.length > 0
+          ? Math.round((typeEvents.reduce((sum, e) => sum + e.magnitude, 0) / typeEvents.length) * 10) / 10
+          : 0;
+        const severity = getSeverity(type, avgMagnitude);
+
         return {
           type,
           conviction,
@@ -52,9 +60,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           daysWithData,
           todayDetected,
           latestEvent,
+          severity,
+          avgMagnitude,
         };
       })
-      .filter((s) => s.occurrences >= 2);
+      .filter((s) => s.occurrences >= 2 && s.severity !== 'mild')
+      .sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity] || b.conviction - a.conviction)
+      .slice(0, 3);
 
     const response: PatternsResponse = {
       patterns: summaries,
