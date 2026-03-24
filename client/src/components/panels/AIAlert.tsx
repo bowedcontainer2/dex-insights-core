@@ -52,7 +52,7 @@ export default function AIAlert({ patterns, insight }: Props) {
     : patterns.sort((a, b) => b.conviction - a.conviction)[0] ?? null;
 
   const title = useLlm ? 'AI Daily Briefing' : (topPattern ? PATTERN_TITLES[topPattern.type] : 'No Alerts');
-  const subtitle = useLlm ? 'Powered by Claude' : (topPattern ? 'Pattern Alert' : 'AI Predictive Model');
+  const subtitle = useLlm ? null : (topPattern ? 'Pattern Alert' : 'AI Predictive Model');
   const body = useLlm
     ? insight!.alert
     : topPattern
@@ -67,7 +67,7 @@ export default function AIAlert({ patterns, insight }: Props) {
         </svg>
       </div>
       <div className={styles.content}>
-        <div className={styles.subtitle}>{subtitle}</div>
+        {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
         <div className={styles.title}>{title}</div>
         <p className={styles.description}>{body}</p>
         <div className={styles.actions}>
