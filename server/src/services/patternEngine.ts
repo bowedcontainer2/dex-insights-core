@@ -1,5 +1,29 @@
 import { config } from '../config.js';
-import type { PatternEvent, DailyStats } from '../../../shared/types.js';
+import type { PatternEvent, PatternType, DailyStats } from '../../../shared/types.js';
+
+// ── Severity Classification ───────────────────────────────────────
+
+type Severity = 'mild' | 'moderate' | 'severe';
+
+const SEVERITY_THRESHOLDS: Record<PatternType, [number, number]> = {
+  // [moderate_threshold, severe_threshold]
+  morning_spike:     [80,  120],  // mg/dL delta
+  rapid_rise:        [85,  120],  // mg/dL in ~30 min
+  rapid_drop:        [85,  120],  // mg/dL in ~30 min
+  prolonged_high:    [60,  120],  // minutes above 180
+  prolonged_low:     [30,   60],  // minutes below 70
+  nocturnal_low:     [20,   45],  // minutes below 70 asleep — more aggressive
+  high_variability:  [42,   50],  // CV%
+  elevated_overnight:[160, 200],  // mg/dL avg
+  post_meal_crash:   [25,   40],  // mg/dL overshoot below baseline
+};
+
+export function getSeverity(type: PatternType, magnitude: number): Severity {
+  const [moderate, severe] = SEVERITY_THRESHOLDS[type];
+  if (magnitude >= severe) return 'severe';
+  if (magnitude >= moderate) return 'moderate';
+  return 'mild';
+}
 
 interface Reading {
   value: number;

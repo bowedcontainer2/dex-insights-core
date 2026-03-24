@@ -1,9 +1,25 @@
-import { useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { getDexcomStatus } from '../services/api';
 import type { Session, User } from '@supabase/supabase-js';
+import React from 'react';
 
-export function useAuth() {
+interface AuthState {
+  user: User | null;
+  session: Session | null;
+  loading: boolean;
+  authenticated: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  dexcomConnected: boolean;
+  dexcomLoading: boolean;
+  refreshDexcomStatus: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthState | null>(null);
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,7 +88,7 @@ export function useAuth() {
     }
   }, [session]);
 
-  return {
+  const value: AuthState = {
     user,
     session,
     loading,
@@ -84,4 +100,12 @@ export function useAuth() {
     dexcomLoading,
     refreshDexcomStatus,
   };
+
+  return React.createElement(AuthContext.Provider, { value }, children);
+}
+
+export function useAuth(): AuthState {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  return ctx;
 }

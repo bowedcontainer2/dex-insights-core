@@ -74,6 +74,8 @@ export interface PatternSummary {
   daysWithData: number;
   todayDetected: boolean;
   latestEvent?: PatternEvent;
+  severity: 'mild' | 'moderate' | 'severe';
+  avgMagnitude: number;
 }
 
 export interface DailyStats {

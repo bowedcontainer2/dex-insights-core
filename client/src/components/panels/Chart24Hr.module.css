@@ -1,6 +1,5 @@
 .chartArea {
-  flex: 1;
-  min-height: 380px;
+  height: 480px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,10 +100,10 @@
   height: 100%;
   position: relative;
   box-shadow:
-    0 16px 60px rgba(45, 65, 55, 0.5),
+    0 4px 12px rgba(45, 65, 55, 0.3),
     inset 0 2px 6px rgba(200, 220, 210, 0.08),
     inset 0 -3px 6px rgba(0, 0, 0, 0.45),
-    0 4px 8px rgba(0, 0, 0, 0.35),
+    0 2px 4px rgba(0, 0, 0, 0.2),
     inset 0 0 50px rgba(75, 105, 95, 0.25);
 }
 
@@ -289,7 +288,7 @@
 
 @media (max-width: 640px) {
   .chartArea {
-    min-height: 300px;
+    height: 300px;
   }
 
   .hardwareFrame {

@@ -5,10 +5,24 @@ import { storeReadings, getReadingsForDate, getReadingsByRange } from '../servic
 import { storePatternEvents, upsertDailyStats } from '../services/patternStore.js';
 import { analyzeDay } from '../services/patternEngine.js';
 import { generateInsights } from '../services/insightEngine.js';
+import { getDexcomSession } from '../../../lib/profileStore.js';
 
 const router = Router();
 
 router.use(authGuard);
+
+async function resolveDexcomSession(req: Request): Promise<{ sessionId: string; baseUrl: string }> {
+  // Try database lookup via JWT userId first
+  if (req.userId) {
+    const dbSession = await getDexcomSession(req.userId);
+    if (dbSession) return dbSession;
+  }
+  // Fall back to express-session
+  if (req.session.sessionId) {
+    return { sessionId: req.session.sessionId, baseUrl: '' };
+  }
+  throw new Error('No Dexcom session found');
+}
 
 router.get('/egvs', async (req: Request, res: Response) => {
   try {
@@ -16,7 +30,8 @@ router.get('/egvs', async (req: Request, res: Response) => {
     const minutes = hours * 60;
     const maxCount = Math.min(minutes / 5, 288);
 
-    const data = await fetchLatestReadings(req.session.sessionId!, minutes, maxCount);
+    const dexSession = await resolveDexcomSession(req);
+    const data = await fetchLatestReadings(dexSession.sessionId, minutes, maxCount, dexSession.baseUrl || undefined);
 
     // Store first so SQLite has the latest readings for the merge
     try {
@@ -78,7 +93,8 @@ router.get('/egvs', async (req: Request, res: Response) => {
 
 router.get('/current', async (req: Request, res: Response) => {
   try {
-    const data = await fetchLatestReadings(req.session.sessionId!, 30, 1);
+    const dexSession = await resolveDexcomSession(req);
+    const data = await fetchLatestReadings(dexSession.sessionId, 30, 1, dexSession.baseUrl || undefined);
 
     if (data.egvs.length === 0) {
       res.json({ reading: null });

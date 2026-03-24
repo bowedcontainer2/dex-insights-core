@@ -26,8 +26,8 @@ export default function Chart24Hr({ egvs, loading, hours, onHoursChange, todaySt
   const tbr = todayStats ? `${todayStats.timeBelowPct}%` : '--';
 
   return (
-    <Panel gridColumn="span 8" gridRow="span 4">
-      <PanelHeader>
+    <Panel gridColumn="span 8" gridRow="span 4" style={{ border: 'none', background: 'none' }}>
+      <PanelHeader style={{ border: 'var(--border-thin)' }}>
         <span>{hours}HR Trajectory & Prediction</span>
         <div className={styles.rangeBar}>
           <div className={styles.stats}>

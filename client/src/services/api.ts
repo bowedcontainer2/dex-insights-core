@@ -15,7 +15,6 @@ async function fetchJSON<T>(url: string, options?: RequestInit): Promise<T> {
 
   const res = await fetch(url, { ...options, headers });
   if (res.status === 401) {
-    window.location.href = '/login';
     throw new Error('Unauthorized');
   }
   if (!res.ok) throw new Error(`API error: ${res.status}`);

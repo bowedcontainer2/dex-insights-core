@@ -50,7 +50,7 @@ function PreviewDashboard() {
 }
 
 export default function LoginPage() {
-  const { authenticated, loading, signIn, signUp } = useAuth();
+  const { authenticated, signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [error, setError] = useState('');
@@ -58,7 +58,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  if (loading) return null;
   if (authenticated) return <Navigate to="/dashboard" replace />;
 
   const handleSubmit = async (e: React.FormEvent) => {

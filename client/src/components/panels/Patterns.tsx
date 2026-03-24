@@ -59,6 +59,14 @@ function formatMagnitude(p: PatternSummary): { value: string; unit: string } {
   }
 }
 
+function formatContext(p: PatternSummary): string {
+  const avg = Math.round(p.avgMagnitude);
+  const latest = Math.round(p.latestEvent?.magnitude ?? 0);
+  const unit = MAGNITUDE_UNITS[p.type];
+  const sign = ['morning_spike', 'rapid_rise'].includes(p.type) ? '+' : ['rapid_drop', 'post_meal_crash'].includes(p.type) ? '-' : '';
+  return `avg ${sign}${avg} ${unit}, latest ${sign}${latest} ${unit}`;
+}
+
 function formatRecency(p: PatternSummary): string {
   if (!p.latestEvent) return '';
   const eventDate = p.latestEvent.detectedDate;
@@ -96,9 +104,7 @@ export default function Patterns({ patterns, daysWithData }: Props) {
           <EmptyState>
             {daysWithData < 2
               ? `${daysWithData} day recorded — patterns require at least 2 days of data to identify trends.`
-              : daysWithData < 7
-                ? `${daysWithData} of 7 days recorded — no recurring patterns yet. Keep wearing your CGM to build a clearer picture.`
-                : 'No recurring patterns detected in the last 7 days.'}
+              : 'Your glucose patterns are looking stable — no significant patterns detected.'}
           </EmptyState>
         ) : (
           <ul className={styles.list}>
@@ -106,6 +112,7 @@ export default function Patterns({ patterns, daysWithData }: Props) {
               const mag = formatMagnitude(p);
               const recency = formatRecency(p);
               const lastTime = formatLastTime(p);
+              const context = formatContext(p);
               return (
                 <li
                   key={p.type}
@@ -117,12 +124,14 @@ export default function Patterns({ patterns, daysWithData }: Props) {
                   <div className={styles.info}>
                     <div className={styles.labelRow}>
                       <span className={styles.label}>{PATTERN_LABELS[p.type]}</span>
+                      <span className={styles[`severity_${p.severity}`]} />
                       {p.todayDetected && <span className={styles.todayBadge}>today</span>}
                     </div>
                     <div className={styles.detail}>
                       {p.occurrences} of {p.daysWithData} days
                       {lastTime && ` · last ${recency} ${lastTime}`}
                     </div>
+                    <div className={styles.context}>{context}</div>
                     <div className={styles.dots}>
                       {Array.from({ length: Math.min(p.daysWithData, 7) }, (_, idx) => (
                         <span

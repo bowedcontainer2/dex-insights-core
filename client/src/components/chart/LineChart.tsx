@@ -90,7 +90,7 @@ export default function LineChart({ egvs, hours = 24 }: Props) {
           y1={70}
           y2={180}
           fill="url(#hatchPattern)"
-          ifOverflow="extendDomain"
+          ifOverflow="hidden"
         />
         <ReferenceLine y={70} stroke={SCREEN_ACCENT} strokeDasharray="4 4" strokeOpacity={0.6} />
         <ReferenceLine y={180} stroke={SCREEN_ACCENT} strokeDasharray="4 4" strokeOpacity={0.6} />
@@ -106,6 +106,7 @@ export default function LineChart({ egvs, hours = 24 }: Props) {
           axisLine={{ stroke: SCREEN_FG }}
           interval="preserveStartEnd"
           tickCount={7}
+          allowDataOverflow={true}
         />
         <YAxis
           domain={[40, 350]}
@@ -115,6 +116,7 @@ export default function LineChart({ egvs, hours = 24 }: Props) {
           tickLine={false}
           axisLine={{ stroke: SCREEN_FG }}
           width={36}
+          allowDataOverflow={true}
         />
 
         <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(42, 34, 28, 0.3)', strokeDasharray: '3 3' }} />

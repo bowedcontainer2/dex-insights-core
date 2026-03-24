@@ -114,9 +114,10 @@ function mapTrend(shareTrend: string): DexcomTrend {
 export async function fetchLatestReadings(
   sessionId: string,
   minutes: number = 1440,
-  maxCount: number = 288
+  maxCount: number = 288,
+  overrideBaseUrl?: string
 ): Promise<DexcomEGVResponse> {
-  const baseUrl = getBaseUrl();
+  const baseUrl = overrideBaseUrl || getBaseUrl();
   const url = `${baseUrl}/Publisher/ReadPublisherLatestGlucoseValues?sessionId=${sessionId}&minutes=${minutes}&maxCount=${maxCount}`;
   const res = await fetch(url, {
     method: 'POST',

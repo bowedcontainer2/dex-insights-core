@@ -88,14 +88,13 @@ function DexcomConnectCard({ onConnected }: { onConnected: () => void }) {
 }
 
 export default function DashboardPage() {
-  const { authenticated, loading: authLoading, signOut, dexcomConnected, dexcomLoading, refreshDexcomStatus, user } = useAuth();
+  const { authenticated, signOut, dexcomConnected, dexcomLoading, refreshDexcomStatus, user } = useAuth();
   const [chartHours, setChartHours] = useState(24);
   const { egvs, loading: dataLoading } = useGlucoseData(24);
   const { reading, stale } = useCurrentReading();
   const { data: patternsData } = usePatterns();
   const { data: insightsData } = useInsights();
 
-  if (!USE_MOCK && authLoading) return null;
   if (!USE_MOCK && !authenticated) return <Navigate to="/login" replace />;
 
   // Show Dexcom connect card if not connected

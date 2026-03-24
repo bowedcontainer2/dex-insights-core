@@ -1,9 +1,9 @@
 :root {
-  --bg: #e8dfd1;
+  --bg: #ffffff;
   --fg: #3d322a;
   --accent: #5e6647;
 
-  --bg-panel: rgba(61, 50, 42, 0.03);
+  --bg-panel: #e8dfd1;
   --bg-panel-header: rgba(61, 50, 42, 0.05);
   --bg-panel-divider: rgba(61, 50, 42, 0.2);
   --bg-panel-border: rgba(61, 50, 42, 0.15);
