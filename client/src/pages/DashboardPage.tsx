@@ -13,6 +13,7 @@ import AIAlert from '../components/panels/AIAlert';
 import Chart24Hr from '../components/panels/Chart24Hr';
 import Patterns from '../components/panels/Patterns';
 import ActionableInsight from '../components/panels/ActionableInsight';
+import DaySummary from '../components/panels/DaySummary';
 import Button from '../components/Button';
 import Footer from '../components/layout/Footer';
 import styles from './DashboardPage.module.css';
@@ -111,15 +112,13 @@ export default function DashboardPage() {
   return (
     <div className={styles.page}>
       <Header onLogout={signOut} userEmail={user?.email} />
-      {insightsData?.source === 'llm' && insightsData.daySummary && (
-        <p className={styles.daySummary}>{insightsData.daySummary}</p>
-      )}
       <Dashboard>
         <CurrentGlucose reading={reading} stale={stale} loading={dataLoading} />
         <AIAlert patterns={patternsData?.patterns ?? []} insight={insightsData} />
         <Chart24Hr egvs={egvs} loading={dataLoading} hours={chartHours} onHoursChange={setChartHours} todayStats={patternsData?.todayStats ?? null} />
-        <Patterns patterns={patternsData?.patterns ?? []} daysWithData={patternsData?.windowStats?.length ?? 0} />
+        <DaySummary insight={insightsData} />
         <ActionableInsight patterns={patternsData?.patterns ?? []} insight={insightsData} />
+        <Patterns patterns={patternsData?.patterns ?? []} daysWithData={patternsData?.windowStats?.length ?? 0} />
       </Dashboard>
       <Footer />
     </div>

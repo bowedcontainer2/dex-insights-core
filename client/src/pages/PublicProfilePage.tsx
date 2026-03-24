@@ -8,6 +8,7 @@ import AIAlert from '../components/panels/AIAlert';
 import Chart24Hr from '../components/panels/Chart24Hr';
 import Patterns from '../components/panels/Patterns';
 import ActionableInsight from '../components/panels/ActionableInsight';
+import DaySummary from '../components/panels/DaySummary';
 import Footer from '../components/layout/Footer';
 import styles from './PublicProfilePage.module.css';
 
@@ -98,16 +99,13 @@ export default function PublicProfilePage() {
         </div>
       </header>
 
-      {data.insight?.source === 'llm' && data.insight.daySummary && (
-        <p className={styles.daySummary}>{data.insight.daySummary}</p>
-      )}
-
       <Dashboard>
         <CurrentGlucose reading={currentReading} stale={stale} loading={false} />
         <AIAlert patterns={data.patterns} insight={data.insight} />
         <Chart24Hr egvs={data.egvs} loading={false} hours={chartHours} onHoursChange={setChartHours} todayStats={data.todayStats} />
-        <Patterns patterns={data.patterns} daysWithData={data.windowStats?.length ?? 0} />
+        <DaySummary insight={data.insight} />
         <ActionableInsight patterns={data.patterns} insight={data.insight} />
+        <Patterns patterns={data.patterns} daysWithData={data.windowStats?.length ?? 0} />
       </Dashboard>
       <Footer />
     </div>
