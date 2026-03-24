@@ -104,6 +104,14 @@ export async function generateInsights(userId: string, timezone: string): Promis
     ],
   });
 
+  console.log('OpenAI response:', JSON.stringify({
+    finishReason: response.choices[0]?.finish_reason,
+    hasContent: !!response.choices[0]?.message?.content,
+    contentLength: response.choices[0]?.message?.content?.length,
+    refusal: response.choices[0]?.message?.refusal,
+    usage: response.usage,
+  }));
+
   const text = response.choices[0]?.message?.content;
   if (!text) {
     throw new Error('No text response from OpenAI');
