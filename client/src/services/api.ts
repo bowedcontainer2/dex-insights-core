@@ -1,4 +1,4 @@
-import type { DexcomEGV, DexcomEGVResponse, PatternsResponse, InsightsResponse } from '../types/dexcom';
+import type { DexcomEGV, DexcomEGVResponse, PatternsResponse, InsightsResponse, PublicDashboardData } from '../types/dexcom';
 import { getMockEGVs, getMockCurrentReading } from '../mocks/egvData';
 import { supabase } from '../lib/supabase';
 
@@ -67,4 +67,11 @@ export async function getDexcomStatus(): Promise<{ connected: boolean }> {
 
 export async function disconnectDexcom(): Promise<void> {
   await fetchJSON('/api/dexcom/disconnect', { method: 'POST' });
+}
+
+export async function getPublicProfile(slug: string): Promise<PublicDashboardData> {
+  const res = await fetch(`/api/public/${encodeURIComponent(slug)}`);
+  if (res.status === 404) throw new Error('not_found');
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
 }

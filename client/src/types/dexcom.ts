@@ -11,4 +11,5 @@ export type {
   DailyStats,
   PatternsResponse,
   InsightsResponse,
+  PublicDashboardData,
 } from '../../../shared/types';

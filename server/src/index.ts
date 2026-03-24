@@ -8,6 +8,7 @@ import glucoseRoutes from './routes/glucose.js';
 import patternsRoutes from './routes/patterns.js';
 import insightsRoutes from './routes/insights.js';
 import dexcomRoutes from './routes/dexcom.js';
+import publicRoutes from './routes/public.js';
 
 initDatabase();
 
@@ -25,6 +26,7 @@ app.use('/api/glucose', glucoseRoutes);
 app.use('/api/patterns', patternsRoutes);
 app.use('/api/insights', insightsRoutes);
 app.use('/api/dexcom', dexcomRoutes);
+app.use('/api/public', publicRoutes);
 
 app.listen(config.port, () => {
   console.log(`Server running on http://localhost:${config.port}`);

@@ -105,3 +105,13 @@ export interface InsightsResponse {
   source: 'llm' | 'fallback';
   generatedDate: string;
 }
+
+export interface PublicDashboardData {
+  displayName: string;
+  currentReading: DexcomEGV | null;
+  egvs: DexcomEGV[];
+  patterns: PatternSummary[];
+  todayStats: DailyStats | null;
+  windowStats: DailyStats[];
+  insight: InsightsResponse | null;
+}
