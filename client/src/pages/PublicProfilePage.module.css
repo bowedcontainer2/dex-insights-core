@@ -7,35 +7,28 @@
 
 .header {
   display: flex;
-  align-items: baseline;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 1rem;
+  border-bottom: var(--border-stark);
+  margin-bottom: 2rem;
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  letter-spacing: -0.05em;
   font-weight: 900;
-  letter-spacing: -0.02em;
   margin: 0;
 }
 
 .meta {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
   font-size: 0.875rem;
-  opacity: 0.7;
-}
-
-.displayName {
-  font-weight: 700;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.staleness {
-  font-weight: 500;
+  font-weight: 700;
 }
 
 .daySummary {
@@ -60,6 +53,10 @@
   .page {
     padding: 1.5rem;
   }
+
+  .header {
+    margin-bottom: 1.5rem;
+  }
 }
 
 @media (max-width: 640px) {
@@ -68,8 +65,18 @@
   }
 
   .header {
-    flex-direction: column;
-    gap: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .title {
+    width: 100%;
+    font-size: clamp(1.75rem, 8vw, 2.5rem);
+  }
+
+  .meta {
+    font-size: 0.75rem;
   }
 
   .daySummary {

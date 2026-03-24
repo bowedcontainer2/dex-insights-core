@@ -92,8 +92,9 @@ export default function PublicProfilePage() {
       <header className={styles.header}>
         <h1 className={styles.title}>DEX_INSIGHTS_CORE</h1>
         <div className={styles.meta}>
-          <span className={styles.displayName}>{data.displayName}</span>
-          {staleLabel && <span className={styles.staleness}>Last reading: {staleLabel}</span>}
+          <span>{data.displayName}</span>
+          {staleLabel && <span>Last reading: {staleLabel}</span>}
+          <span>DATA SYNC: STORED</span>
         </div>
       </header>
 
