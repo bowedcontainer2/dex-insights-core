@@ -117,8 +117,8 @@ export default function DashboardPage() {
         <AIAlert patterns={patternsData?.patterns ?? []} insight={insightsData} />
         <Chart24Hr egvs={egvs} loading={dataLoading} hours={chartHours} onHoursChange={setChartHours} todayStats={patternsData?.todayStats ?? null} />
         <ActionableInsight patterns={patternsData?.patterns ?? []} insight={insightsData} />
-        <DaySummary insight={insightsData} />
         <Patterns patterns={patternsData?.patterns ?? []} daysWithData={patternsData?.windowStats?.length ?? 0} />
+        <DaySummary insight={insightsData} />
       </Dashboard>
       <Footer />
     </div>

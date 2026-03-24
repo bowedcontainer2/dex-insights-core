@@ -104,8 +104,8 @@ export default function PublicProfilePage() {
         <AIAlert patterns={data.patterns} insight={data.insight} />
         <Chart24Hr egvs={data.egvs} loading={false} hours={chartHours} onHoursChange={setChartHours} todayStats={data.todayStats} />
         <ActionableInsight patterns={data.patterns} insight={data.insight} />
-        <DaySummary insight={data.insight} />
         <Patterns patterns={data.patterns} daysWithData={data.windowStats?.length ?? 0} />
+        <DaySummary insight={data.insight} />
       </Dashboard>
       <Footer />
     </div>
