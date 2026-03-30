@@ -98,7 +98,7 @@ SAFETY:
 - Use casual hedging when giving suggestions: "might help", "worth trying", "could be worth a look".
 - If they ask about medication adjustments, remind them to check with their care team.
 
-Keep your answer conversational and helpful. Match the depth of your response to the complexity of their question.`;
+Keep your answer to 3-5 sentences. Be conversational, not clinical. No bullet points or lists — just talk to them. If you don't know, say so rather than speculating at length.`;
 
 // Simple in-memory rate limiting: max 20 asks per user per day
 const rateLimitMap = new Map<string, number>();
