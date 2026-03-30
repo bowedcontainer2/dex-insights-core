@@ -1,8 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import OpenAI from 'openai';
 import { requireAuth, AuthError } from '../lib/auth.js';
-import { buildPromptData } from '../lib/insightEngine.js';
 import { config } from '../lib/config.js';
+import { getReadingsByRange } from '../lib/readingStore.js';
+import { getPatternEventsByRange, getDailyStatsByRange } from '../lib/patternStore.js';
 import type { QuickAskKey } from '../shared/types.js';
 
 const VALID_KEYS: QuickAskKey[] = ['last_night', 'today_so_far', 'tonight_outlook', 'spike_normal'];
@@ -14,7 +15,54 @@ const QUESTIONS: Record<QuickAskKey, string> = {
   spike_normal: 'Is my current reading or most recent spike normal for me? Compare it against my historical patterns from the past week.',
 };
 
-const QUICKASK_SYSTEM_PROMPT = `You answer specific questions about a user's CGM glucose data. You have access to their last 7 days of readings, daily stats, detected patterns, and previous AI insights.
+// How far back to pull readings per question type
+const READING_HOURS: Record<QuickAskKey, number> = {
+  last_night: 12,       // overnight + some evening context
+  today_so_far: 16,     // today + late last night
+  tonight_outlook: 24,  // today + last night for pattern context
+  spike_normal: 24,     // recent day for comparison
+};
+
+// How many days of stats/patterns to include
+const CONTEXT_DAYS: Record<QuickAskKey, number> = {
+  last_night: 3,
+  today_so_far: 3,
+  tonight_outlook: 5,
+  spike_normal: 7,      // needs full history for "normal" comparison
+};
+
+async function buildQuickAskData(userId: string, questionKey: QuickAskKey) {
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+
+  const readingHours = READING_HOURS[questionKey];
+  const contextDays = CONTEXT_DAYS[questionKey];
+
+  const readingsStart = new Date(now.getTime() - readingHours * 60 * 60 * 1000).toISOString();
+  const statsStart = new Date(now.getTime() - contextDays * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+  const [readings, dailyStats, patternEvents] = await Promise.all([
+    getReadingsByRange(userId, readingsStart, now.toISOString()),
+    getDailyStatsByRange(userId, statsStart, today),
+    getPatternEventsByRange(userId, statsStart, today),
+  ]);
+
+  const compactReadings = readings.map((r) => ({
+    v: r.value,
+    t: r.trend,
+    r: r.trend_rate,
+    ts: r.system_time,
+  }));
+
+  return {
+    currentTime: now.toISOString(),
+    readings: compactReadings,
+    dailyStats,
+    patternEvents,
+  };
+}
+
+const QUICKASK_SYSTEM_PROMPT = `You answer specific questions about a user's CGM glucose data. You have access to their recent readings, daily stats, and detected patterns.
 
 TONE:
 - Sound like a knowledgeable friend, not a medical textbook.
@@ -54,7 +102,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const userId = await requireAuth(req);
 
-    const { questionKey, timezone } = req.body ?? {};
+    const { questionKey } = req.body ?? {};
     if (!questionKey || !VALID_KEYS.includes(questionKey)) {
       return res.status(400).json({ error: 'Invalid questionKey' });
     }
@@ -63,8 +111,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(429).json({ error: 'Daily question limit reached. Try again tomorrow.' });
     }
 
-    const tz = timezone || 'America/New_York';
-    const promptData = await buildPromptData(userId, tz);
+    const promptData = await buildQuickAskData(userId, questionKey as QuickAskKey);
 
     if (promptData.readings.length === 0) {
       return res.json({

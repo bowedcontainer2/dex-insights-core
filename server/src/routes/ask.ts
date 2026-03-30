@@ -1,8 +1,9 @@
 import { Router, Request, Response } from 'express';
 import OpenAI from 'openai';
 import { authGuard } from '../middleware/authGuard.js';
-import { buildPromptData } from '../services/insightEngine.js';
 import { config } from '../config.js';
+import { getReadingsByRange } from '../services/readingStore.js';
+import { getPatternEventsByRange, getDailyStatsByRange } from '../services/patternStore.js';
 import type { QuickAskKey } from '../../../shared/types.js';
 
 const router = Router();
@@ -18,7 +19,51 @@ const QUESTIONS: Record<QuickAskKey, string> = {
   spike_normal: 'Is my current reading or most recent spike normal for me? Compare it against my historical patterns from the past week.',
 };
 
-const QUICKASK_SYSTEM_PROMPT = `You answer specific questions about a user's CGM glucose data. You have access to their last 7 days of readings, daily stats, detected patterns, and previous AI insights.
+// How far back to pull readings per question type
+const READING_HOURS: Record<QuickAskKey, number> = {
+  last_night: 12,
+  today_so_far: 16,
+  tonight_outlook: 24,
+  spike_normal: 24,
+};
+
+const CONTEXT_DAYS: Record<QuickAskKey, number> = {
+  last_night: 3,
+  today_so_far: 3,
+  tonight_outlook: 5,
+  spike_normal: 7,
+};
+
+function buildQuickAskData(questionKey: QuickAskKey) {
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+
+  const readingHours = READING_HOURS[questionKey];
+  const contextDays = CONTEXT_DAYS[questionKey];
+
+  const readingsStart = new Date(now.getTime() - readingHours * 60 * 60 * 1000).toISOString();
+  const statsStart = new Date(now.getTime() - contextDays * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+  const readings = getReadingsByRange(readingsStart, now.toISOString());
+  const dailyStats = getDailyStatsByRange(statsStart, today);
+  const patternEvents = getPatternEventsByRange(statsStart, today);
+
+  const compactReadings = readings.map((r) => ({
+    v: r.value,
+    t: r.trend,
+    r: r.trend_rate,
+    ts: r.system_time,
+  }));
+
+  return {
+    currentTime: now.toISOString(),
+    readings: compactReadings,
+    dailyStats,
+    patternEvents,
+  };
+}
+
+const QUICKASK_SYSTEM_PROMPT = `You answer specific questions about a user's CGM glucose data. You have access to their recent readings, daily stats, and detected patterns.
 
 TONE:
 - Sound like a knowledgeable friend, not a medical textbook.
@@ -60,7 +105,7 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(429).json({ error: 'Daily question limit reached. Try again tomorrow.' });
     }
 
-    const promptData = buildPromptData();
+    const promptData = buildQuickAskData(questionKey as QuickAskKey);
 
     if (promptData.readings.length === 0) {
       return res.json({
