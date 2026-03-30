@@ -14,6 +14,7 @@ import Chart24Hr from '../components/panels/Chart24Hr';
 import Patterns from '../components/panels/Patterns';
 import ActionableInsight from '../components/panels/ActionableInsight';
 import DaySummary from '../components/panels/DaySummary';
+import QuickAsk from '../components/panels/QuickAsk';
 import Button from '../components/Button';
 import Footer from '../components/layout/Footer';
 import styles from './DashboardPage.module.css';
@@ -118,6 +119,7 @@ export default function DashboardPage() {
         <Chart24Hr egvs={egvs} loading={dataLoading} hours={chartHours} onHoursChange={setChartHours} todayStats={patternsData?.todayStats ?? null} />
         <ActionableInsight patterns={patternsData?.patterns ?? []} insight={insightsData} />
         <Patterns patterns={patternsData?.patterns ?? []} daysWithData={patternsData?.windowStats?.length ?? 0} />
+        <QuickAsk />
         <DaySummary insight={insightsData} />
       </Dashboard>
       <Footer />

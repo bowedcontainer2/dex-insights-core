@@ -1,4 +1,4 @@
-import type { DexcomEGV, DexcomEGVResponse, PatternsResponse, InsightsResponse, PublicDashboardData } from '../types/dexcom';
+import type { DexcomEGV, DexcomEGVResponse, PatternsResponse, InsightsResponse, PublicDashboardData, QuickAskKey, QuickAskResponse } from '../types/dexcom';
 import { getMockEGVs, getMockCurrentReading } from '../mocks/egvData';
 import { supabase } from '../lib/supabase';
 
@@ -67,6 +67,17 @@ export async function getDexcomStatus(): Promise<{ connected: boolean }> {
 
 export async function disconnectDexcom(): Promise<void> {
   await fetchJSON('/api/dexcom/disconnect', { method: 'POST' });
+}
+
+export async function askQuestion(questionKey: QuickAskKey, timezone?: string): Promise<QuickAskResponse> {
+  if (USE_MOCK) {
+    return { answer: 'Mock answer — connect your Dexcom to get real AI-powered insights about your glucose data.', questionKey };
+  }
+  return fetchJSON<QuickAskResponse>('/api/ask', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ questionKey, timezone: timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone }),
+  });
 }
 
 export async function getPublicProfile(slug: string): Promise<PublicDashboardData> {

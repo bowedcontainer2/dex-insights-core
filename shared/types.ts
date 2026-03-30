@@ -106,6 +106,14 @@ export interface InsightsResponse {
   generatedDate: string;
 }
 
+// QuickAsk types
+export type QuickAskKey = 'last_night' | 'today_so_far' | 'tonight_outlook' | 'spike_normal';
+
+export interface QuickAskResponse {
+  answer: string;
+  questionKey: QuickAskKey;
+}
+
 export interface PublicDashboardData {
   displayName: string;
   currentReading: DexcomEGV | null;

@@ -12,4 +12,6 @@ export type {
   PatternsResponse,
   InsightsResponse,
   PublicDashboardData,
+  QuickAskKey,
+  QuickAskResponse,
 } from '../../../shared/types';
