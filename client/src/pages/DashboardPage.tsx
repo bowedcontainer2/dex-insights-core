@@ -5,6 +5,7 @@ import { useCurrentReading } from '../hooks/useCurrentReading';
 import { usePatterns } from '../hooks/usePatterns';
 import { useInsights } from '../hooks/useInsights';
 import { connectDexcom } from '../services/api';
+import { useQuickAsk } from '../hooks/useQuickAsk';
 import { Navigate } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Dashboard from '../components/layout/Dashboard';
@@ -96,6 +97,7 @@ export default function DashboardPage() {
   const { reading, stale } = useCurrentReading();
   const { data: patternsData } = usePatterns();
   const { data: insightsData } = useInsights();
+  const quickAsk = useQuickAsk();
 
   if (!USE_MOCK && !authenticated) return <Navigate to="/login" replace />;
 
@@ -115,8 +117,8 @@ export default function DashboardPage() {
       <Header onLogout={signOut} userEmail={user?.email} />
       <Dashboard>
         <CurrentGlucose reading={reading} stale={stale} loading={dataLoading} />
-        <AIAlert patterns={patternsData?.patterns ?? []} insight={insightsData} />
-        <QuickAsk />
+        <AIAlert patterns={patternsData?.patterns ?? []} insight={insightsData} onAskAbout={quickAsk.askCustom} />
+        <QuickAsk {...quickAsk} />
         <Chart24Hr egvs={egvs} loading={dataLoading} hours={chartHours} onHoursChange={setChartHours} todayStats={patternsData?.todayStats ?? null} />
         <ActionableInsight patterns={patternsData?.patterns ?? []} insight={insightsData} />
         <Patterns patterns={patternsData?.patterns ?? []} daysWithData={patternsData?.windowStats?.length ?? 0} />

@@ -10,6 +10,7 @@ import Patterns from '../components/panels/Patterns';
 import ActionableInsight from '../components/panels/ActionableInsight';
 import DaySummary from '../components/panels/DaySummary';
 import QuickAsk from '../components/panels/QuickAsk';
+import { useQuickAsk } from '../hooks/useQuickAsk';
 import Footer from '../components/layout/Footer';
 import styles from './PublicProfilePage.module.css';
 
@@ -41,6 +42,7 @@ export default function PublicProfilePage() {
   const [error, setError] = useState<'not_found' | 'error' | null>(null);
   const [loading, setLoading] = useState(true);
   const [chartHours, setChartHours] = useState(24);
+  const quickAsk = useQuickAsk();
 
   useEffect(() => {
     if (!slug) return;
@@ -102,8 +104,8 @@ export default function PublicProfilePage() {
 
       <Dashboard>
         <CurrentGlucose reading={currentReading} stale={stale} loading={false} />
-        <AIAlert patterns={data.patterns} insight={data.insight} />
-        <QuickAsk />
+        <AIAlert patterns={data.patterns} insight={data.insight} onAskAbout={quickAsk.askCustom} />
+        <QuickAsk {...quickAsk} />
         <Chart24Hr egvs={data.egvs} loading={false} hours={chartHours} onHoursChange={setChartHours} todayStats={data.todayStats} />
         <ActionableInsight patterns={data.patterns} insight={data.insight} />
         <Patterns patterns={data.patterns} daysWithData={data.windowStats?.length ?? 0} />

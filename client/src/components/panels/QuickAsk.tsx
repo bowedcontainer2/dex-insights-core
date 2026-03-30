@@ -1,7 +1,9 @@
 import { useState, type ReactNode } from 'react';
-import { useQuickAsk } from '../../hooks/useQuickAsk';
 import type { QuickAskKey } from '../../types/dexcom';
+import type { useQuickAsk } from '../../hooks/useQuickAsk';
 import styles from './QuickAsk.module.css';
+
+export type QuickAskProps = ReturnType<typeof useQuickAsk>;
 
 const BUTTONS: { key: QuickAskKey; label: string; icon: ReactNode }[] = [
   {
@@ -41,8 +43,7 @@ const BUTTON_LABELS: Record<QuickAskKey, string> = {
   spike_normal: 'Is this spike normal?',
 };
 
-export default function QuickAsk() {
-  const { answer, loading, error, activeQuestion, customQuestion, cooldownRemaining, ask, askCustom, dismiss } = useQuickAsk();
+export default function QuickAsk({ answer, loading, error, activeQuestion, customQuestion, cooldownRemaining, ask, askCustom, dismiss }: QuickAskProps) {
   const [inputValue, setInputValue] = useState('');
 
   const hasResponse = answer || error || loading;

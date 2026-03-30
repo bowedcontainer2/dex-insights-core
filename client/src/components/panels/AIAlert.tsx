@@ -41,9 +41,10 @@ function generateDescription(p: PatternSummary): string {
 interface Props {
   patterns: PatternSummary[];
   insight?: InsightsResponse | null;
+  onAskAbout?: (text: string) => void;
 }
 
-export default function AIAlert({ patterns, insight }: Props) {
+export default function AIAlert({ patterns, insight, onAskAbout }: Props) {
   const useLlm = insight?.source === 'llm' && insight.alert;
 
   const todayPatterns = patterns.filter((p) => p.todayDetected);
@@ -70,10 +71,13 @@ export default function AIAlert({ patterns, insight }: Props) {
         {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
         <div className={styles.title}>{title}</div>
         <p className={styles.description}>{body}</p>
-        <div className={styles.actions}>
-          <Button variant="inverted">Acknowledge</Button>
-          <Button variant="inverted">View Protocol</Button>
-        </div>
+        {onAskAbout && (
+          <div className={styles.actions}>
+            <Button variant="inverted" onClick={() => onAskAbout(`Tell me more about this: ${body}. What's causing it and what can I do?`)}>
+              Ask About This
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
