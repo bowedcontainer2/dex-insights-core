@@ -22,36 +22,62 @@ function Screw({ top, left, right, bottom }: { top?: number; left?: number; righ
 }
 
 export default function Chart24Hr({ egvs, loading, hours, onHoursChange, todayStats }: Props) {
-  const tir = todayStats ? `${todayStats.timeInRangePct}%` : '--';
-  const tbr = todayStats ? `${todayStats.timeBelowPct}%` : '--';
+  const tirPct = todayStats?.timeInRangePct ?? 0;
+  const tbrPct = todayStats?.timeBelowPct ?? 0;
+  const tarPct = todayStats?.timeAbovePct ?? 0;
+  const hasStats = todayStats !== null;
 
   return (
     <Panel gridColumn="span 8" gridRow="span 4" style={{ border: 'none', background: 'none' }}>
       <PanelHeader style={{ border: 'var(--border-thin)' }}>
         <span>{hours}HR Trajectory & Prediction</span>
-        <div className={styles.rangeBar}>
-          <div className={styles.stats}>
-            <span>TIR: {tir}</span>
-            <span>TBR: {tbr}</span>
-          </div>
-          <div className={styles.timeButtons}>
-            {TIME_RANGES.map((h) => (
-              <button
-                key={h}
-                className={styles.timeButton}
-                onClick={() => onHoursChange(h)}
-                style={{
-                  background: hours === h ? 'var(--fg)' : 'transparent',
-                  color: hours === h ? 'var(--bg)' : 'var(--fg)',
-                  fontWeight: hours === h ? 900 : 700,
-                }}
-              >
-                {h}h
-              </button>
-            ))}
-          </div>
+        <div className={styles.timeButtons}>
+          {TIME_RANGES.map((h) => (
+            <button
+              key={h}
+              className={styles.timeButton}
+              onClick={() => onHoursChange(h)}
+              style={{
+                background: hours === h ? 'var(--fg)' : 'transparent',
+                color: hours === h ? 'var(--bg)' : 'var(--fg)',
+                fontWeight: hours === h ? 900 : 700,
+              }}
+            >
+              {h}h
+            </button>
+          ))}
         </div>
       </PanelHeader>
+
+      <div className={styles.tirSection}>
+          <div className={styles.tirLabels}>
+            <span className={styles.tirLabel}>Below Range</span>
+            <span className={styles.tirLabel}>In Target Zone</span>
+            <span className={styles.tirLabel}>Above Range</span>
+          </div>
+          <div className={styles.tirBarWrap}>
+            <div className={styles.tirBar}>
+              <div
+                className={styles.tirSegmentBelow}
+                style={{ width: `${Math.max(tbrPct, 4)}%` }}
+              >
+                <span>{tbrPct}%</span>
+              </div>
+              <div
+                className={styles.tirSegmentIn}
+                style={{ width: `${tirPct}%` }}
+              >
+                <span>{tirPct}%</span>
+              </div>
+              <div
+                className={styles.tirSegmentAbove}
+                style={{ width: `${Math.max(tarPct, 4)}%` }}
+              >
+                <span>{tarPct}%</span>
+              </div>
+            </div>
+          </div>
+      </div>
 
       <div className={styles.chartArea}>
         <div className={styles.hardwareFrame}>

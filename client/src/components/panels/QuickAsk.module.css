@@ -1,5 +1,5 @@
 .container {
-  grid-column: 1 / -1;
+  grid-column: span 8;
   grid-row: span 1;
   background-color: var(--accent);
   color: var(--bg);

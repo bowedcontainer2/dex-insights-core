@@ -116,10 +116,10 @@ export default function DashboardPage() {
       <Dashboard>
         <CurrentGlucose reading={reading} stale={stale} loading={dataLoading} />
         <AIAlert patterns={patternsData?.patterns ?? []} insight={insightsData} />
+        <QuickAsk />
         <Chart24Hr egvs={egvs} loading={dataLoading} hours={chartHours} onHoursChange={setChartHours} todayStats={patternsData?.todayStats ?? null} />
         <ActionableInsight patterns={patternsData?.patterns ?? []} insight={insightsData} />
         <Patterns patterns={patternsData?.patterns ?? []} daysWithData={patternsData?.windowStats?.length ?? 0} />
-        <QuickAsk />
         <DaySummary insight={insightsData} />
       </Dashboard>
       <Footer />

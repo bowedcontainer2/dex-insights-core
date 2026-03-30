@@ -65,22 +65,77 @@
   max-width: 180px;
 }
 
-/* Time range button bar */
-.rangeBar {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.stats {
-  display: flex;
-  gap: 1rem;
-  font-weight: 700;
-}
-
+/* Time range buttons */
 .timeButtons {
   display: flex;
   gap: 0.25rem;
+}
+
+/* TIR Segmented Bar */
+.tirSection {
+  background: var(--bg-panel);
+  border: var(--border-thin);
+  border-top: none;
+  padding: 0.5rem 1rem 0.625rem;
+}
+
+.tirLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.tirLabel {
+  font-size: 0.575rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg);
+  border: 1.5px solid var(--fg);
+  padding: 0.15rem 0.4rem;
+  line-height: 1;
+}
+
+.tirBarWrap {
+  display: flex;
+  align-items: center;
+}
+
+.tirBar {
+  display: flex;
+  height: 26px;
+  flex: 1;
+  border: 2px solid var(--fg);
+  background: var(--fg);
+  gap: 2px;
+  position: relative;
+}
+
+.tirSegmentBelow,
+.tirSegmentIn,
+.tirSegmentAbove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  color: rgba(255, 255, 255, 0.85);
+  transition: width 0.4s ease;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.tirSegmentBelow {
+  background: #8b5e3c;
+}
+
+.tirSegmentIn {
+  background: var(--accent);
+}
+
+.tirSegmentAbove {
+  background: #6b6b5e;
 }
 
 .timeButton {

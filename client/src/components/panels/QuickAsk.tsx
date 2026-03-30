@@ -59,8 +59,7 @@ export default function QuickAsk() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <span>AI Query Interface</span>
-        <span className={styles.headerLabel}>Voice/Text Input</span>
+        <span>Ask DayArc</span>
       </div>
       <div className={styles.body}>
         {showDefault && (
