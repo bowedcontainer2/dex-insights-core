@@ -4,6 +4,7 @@ import { authGuard } from '../middleware/authGuard.js';
 import { config } from '../config.js';
 import { getReadingsByRange } from '../services/readingStore.js';
 import { getPatternEventsByRange, getDailyStatsByRange } from '../services/patternStore.js';
+import { summarizeGlucoseData } from '../../../lib/summarizeGlucose.js';
 import type { QuickAskKey } from '../../../shared/types.js';
 
 const router = Router();
@@ -142,6 +143,7 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
     const userQuestion = isPrefire ? QUESTIONS[questionKey as QuickAskKey] : customQuery!.trim();
+    const contextSummary = summarizeGlucoseData(promptData);
 
     const client = new OpenAI({ apiKey: config.openai.apiKey });
 
@@ -150,7 +152,7 @@ router.post('/', async (req: Request, res: Response) => {
       max_completion_tokens: 4096,
       messages: [
         { role: 'system', content: isPrefire ? QUICKASK_SYSTEM_PROMPT : CUSTOM_SYSTEM_PROMPT },
-        { role: 'user', content: JSON.stringify(promptData) },
+        { role: 'user', content: `Here's my glucose data:\n\n${contextSummary}` },
         { role: 'user', content: userQuestion },
       ],
     });

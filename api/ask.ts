@@ -4,6 +4,7 @@ import { requireAuth, AuthError } from '../lib/auth.js';
 import { config } from '../lib/config.js';
 import { getReadingsByRange } from '../lib/readingStore.js';
 import { getPatternEventsByRange, getDailyStatsByRange } from '../lib/patternStore.js';
+import { summarizeGlucoseData } from '../lib/summarizeGlucose.js';
 import type { QuickAskKey } from '../shared/types.js';
 
 const VALID_KEYS: QuickAskKey[] = ['last_night', 'today_so_far', 'tonight_outlook', 'spike_normal'];
@@ -150,6 +151,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const userQuestion = isPrefire ? QUESTIONS[questionKey as QuickAskKey] : customQuery!.trim();
+    const contextSummary = summarizeGlucoseData(promptData);
 
     const client = new OpenAI({ apiKey: config.openai.apiKey });
 
@@ -158,7 +160,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       max_completion_tokens: 4096,
       messages: [
         { role: 'system', content: isPrefire ? QUICKASK_SYSTEM_PROMPT : CUSTOM_SYSTEM_PROMPT },
-        { role: 'user', content: JSON.stringify(promptData) },
+        { role: 'user', content: `Here's my glucose data:\n\n${contextSummary}` },
         { role: 'user', content: userQuestion },
       ],
     });
