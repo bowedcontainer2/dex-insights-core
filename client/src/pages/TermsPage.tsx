@@ -11,7 +11,7 @@ export default function TermsPage() {
 
         <h2>Not Medical Advice</h2>
         <p>
-          Dex Insights Core is an informational tool only. The AI-generated insights, pattern detection,
+          DayArc is an informational tool only. The AI-generated insights, pattern detection,
           and glucose analysis provided by this application are <strong>not medical advice</strong>.
           They are not intended to diagnose, treat, cure, or prevent any disease or health condition.
         </p>
@@ -31,7 +31,7 @@ export default function TermsPage() {
 
         <h2>Limitation of Liability</h2>
         <p>
-          In no event shall the developers or operators of Dex Insights Core be liable for any
+          In no event shall the developers or operators of DayArc be liable for any
           direct, indirect, incidental, special, consequential, or punitive damages arising
           from your use of or inability to use this service, including but not limited to
           health outcomes, medical decisions, or data loss.
@@ -40,7 +40,7 @@ export default function TermsPage() {
         <h2>Dexcom Account Security</h2>
         <p>
           You are responsible for maintaining the security of your Dexcom account credentials.
-          By connecting your Dexcom account, you authorize Dex Insights Core to access your glucose
+          By connecting your Dexcom account, you authorize DayArc to access your glucose
           data through the Dexcom Share API. You may disconnect your Dexcom account at any time
           from the dashboard.
         </p>

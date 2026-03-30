@@ -54,7 +54,7 @@ export default function PublicProfilePage() {
     return (
       <div className={styles.page}>
         <header className={styles.header}>
-          <h1 className={styles.title}>DEX_INSIGHTS_CORE</h1>
+          <h1 className={styles.title}>DayArc</h1>
         </header>
         <div className={styles.status}>Loading...</div>
       </div>
@@ -65,7 +65,7 @@ export default function PublicProfilePage() {
     return (
       <div className={styles.page}>
         <header className={styles.header}>
-          <h1 className={styles.title}>DEX_INSIGHTS_CORE</h1>
+          <h1 className={styles.title}>DayArc</h1>
         </header>
         <div className={styles.status}>Profile not found.</div>
         <Footer />
@@ -77,7 +77,7 @@ export default function PublicProfilePage() {
     return (
       <div className={styles.page}>
         <header className={styles.header}>
-          <h1 className={styles.title}>DEX_INSIGHTS_CORE</h1>
+          <h1 className={styles.title}>DayArc</h1>
         </header>
         <div className={styles.status}>Something went wrong. Please try again later.</div>
         <Footer />
@@ -91,7 +91,7 @@ export default function PublicProfilePage() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <h1 className={styles.title}>DEX_INSIGHTS_CORE</h1>
+        <h1 className={styles.title}>DayArc</h1>
         <div className={styles.meta}>
           <span>{data.displayName}</span>
           {staleLabel && <span>Last reading: {staleLabel}</span>}

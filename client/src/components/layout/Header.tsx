@@ -9,7 +9,7 @@ interface HeaderProps {
 export default function Header({ onLogout, userEmail }: HeaderProps) {
   return (
     <header className={styles.header}>
-      <h1 className={styles.title}>DEX_INSIGHTS_CORE</h1>
+      <h1 className={styles.title}>DayArc</h1>
       <div className={styles.controls}>
         <div className={styles.meta}>
           {userEmail && <span>{userEmail}</span>}

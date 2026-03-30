@@ -84,7 +84,7 @@ export default function LoginPage() {
   return (
     <div className={styles.page}>
       <div className={styles.formSide}>
-        <h1 className={styles.title}>DEX_INSIGHTS_CORE</h1>
+        <h1 className={styles.title}>DayArc</h1>
         <p className={styles.subtitle}>
           {mode === 'signin'
             ? 'Sign in to your account'

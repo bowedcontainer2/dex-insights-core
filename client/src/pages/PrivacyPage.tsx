@@ -11,7 +11,7 @@ export default function PrivacyPage() {
 
         <h2>What Data We Collect</h2>
         <p>
-          When you use Dex Insights Core, we collect and store the following data associated with your account:
+          When you use DayArc, we collect and store the following data associated with your account:
         </p>
         <ul>
           <li><strong>Account information:</strong> Your email address and hashed password (managed by Supabase Auth).</li>
