@@ -97,7 +97,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (err instanceof AuthError) {
       return res.status(err.status).json({ error: err.message });
     }
-    console.error('QuickAsk error:', err);
-    res.status(500).json({ error: 'Failed to get answer' });
+    console.error('QuickAsk error:', err?.message ?? err, err?.status, err?.code);
+    res.status(500).json({ error: 'Failed to get answer', detail: err?.message ?? String(err) });
   }
 }
