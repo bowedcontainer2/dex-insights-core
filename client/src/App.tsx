@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { useAuth } from './hooks/useAuth';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -12,6 +13,8 @@ export default function App() {
   if (loading) return null;
 
   return (
+    <>
+    <Analytics />
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/dashboard" element={<DashboardPage />} />
@@ -20,5 +23,6 @@ export default function App() {
       <Route path="/:slug" element={<PublicProfilePage />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
+    </>
   );
 }
