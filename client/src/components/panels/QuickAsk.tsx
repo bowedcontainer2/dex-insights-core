@@ -69,7 +69,7 @@ export default function QuickAsk() {
                 key={key}
                 className={styles.askButton}
                 onClick={() => ask(key)}
-                disabled={loading}
+                disabled={loading || cooldownRemaining > 0}
               >
                 {icon}
                 {label}
@@ -121,12 +121,12 @@ export default function QuickAsk() {
             placeholder="Ask anything about your glucose data..."
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            disabled={loading}
+            disabled={loading || cooldownRemaining > 0}
           />
           <button
             type="submit"
             className={styles.sendButton}
-            disabled={!inputValue.trim() || loading}
+            disabled={!inputValue.trim() || loading || cooldownRemaining > 0}
           >
             <svg className={styles.sendIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="22" y1="2" x2="11" y2="13" />
