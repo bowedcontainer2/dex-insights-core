@@ -73,7 +73,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     const response = await client.chat.completions.create({
       model: config.openai.model,
-      max_completion_tokens: 512,
+      max_completion_tokens: 4096,
       messages: [
         { role: 'system', content: QUICKASK_SYSTEM_PROMPT },
         { role: 'user', content: JSON.stringify(promptData) },
