@@ -45,13 +45,13 @@ export default function QuickAsk() {
   const { answer, loading, error, activeQuestion, customQuestion, cooldownRemaining, ask, askCustom, dismiss } = useQuickAsk();
   const [inputValue, setInputValue] = useState('');
 
-  const showDefault = !loading && !answer && !error;
+  const hasResponse = answer || error || loading;
   const questionDisplay = activeQuestion ? BUTTON_LABELS[activeQuestion] : customQuestion;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = inputValue.trim();
-    if (!trimmed || loading || cooldownRemaining > 0) return;
+    if (!trimmed || loading) return;
     askCustom(trimmed);
     setInputValue('');
   };
@@ -62,44 +62,21 @@ export default function QuickAsk() {
         <span>Ask DayArc</span>
       </div>
       <div className={styles.body}>
-        {showDefault && (
-          <>
-            <div className={styles.buttonRow}>
-              {BUTTONS.map(({ key, label, icon }) => (
-                <button
-                  key={key}
-                  className={styles.askButton}
-                  onClick={() => ask(key)}
-                  disabled={cooldownRemaining > 0}
-                >
-                  {icon}
-                  {label}
-                  <span className={styles.buttonDot} />
-                </button>
-              ))}
-            </div>
-            <form className={styles.inputRow} onSubmit={handleSubmit}>
-              <span className={styles.inputPrefix}>&gt;</span>
-              <input
-                className={styles.input}
-                type="text"
-                placeholder="Or type custom query..."
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                disabled={cooldownRemaining > 0}
-              />
+        {!hasResponse && (
+          <div className={styles.buttonRow}>
+            {BUTTONS.map(({ key, label, icon }) => (
               <button
-                type="submit"
-                className={styles.sendButton}
-                disabled={!inputValue.trim() || cooldownRemaining > 0}
+                key={key}
+                className={styles.askButton}
+                onClick={() => ask(key)}
+                disabled={loading}
               >
-                <svg className={styles.sendIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="22" y1="2" x2="11" y2="13" />
-                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                </svg>
+                {icon}
+                {label}
+                <span className={styles.buttonDot} />
               </button>
-            </form>
-          </>
+            ))}
+          </div>
         )}
 
         {loading && (
@@ -115,7 +92,7 @@ export default function QuickAsk() {
             <p className={styles.answerText}>{answer}</p>
             <div className={styles.dismissRow}>
               <button className={styles.dismissButton} onClick={dismiss}>
-                Ask Another
+                Back
               </button>
               {cooldownRemaining > 0 && (
                 <span className={styles.cooldownHint}>{cooldownRemaining}s</span>
@@ -130,11 +107,33 @@ export default function QuickAsk() {
             <p className={styles.errorText}>{error}</p>
             <div className={styles.dismissRow}>
               <button className={styles.dismissButton} onClick={dismiss}>
-                Try Again
+                Back
               </button>
             </div>
           </>
         )}
+
+        <form className={styles.inputRow} onSubmit={handleSubmit}>
+          <span className={styles.inputPrefix}>&gt;</span>
+          <input
+            className={styles.input}
+            type="text"
+            placeholder="Ask anything about your glucose data..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            disabled={loading}
+          />
+          <button
+            type="submit"
+            className={styles.sendButton}
+            disabled={!inputValue.trim() || loading}
+          >
+            <svg className={styles.sendIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+          </button>
+        </form>
       </div>
     </div>
   );

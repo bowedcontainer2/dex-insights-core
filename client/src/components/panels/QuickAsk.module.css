@@ -107,10 +107,8 @@
   outline: none;
   color: var(--bg);
   font-family: inherit;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  font-size: 0.85rem;
+  font-weight: 500;
   padding: 0.75rem 0;
 }
 

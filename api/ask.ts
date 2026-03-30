@@ -86,6 +86,20 @@ RESPONSE FORMAT:
 - 2-3 short sentences max. Plain text, no markdown, no bullets, no lists.
 - Answer the question → one key insight → one thing to do.`;
 
+const CUSTOM_SYSTEM_PROMPT = `You're a helpful companion with access to someone's CGM glucose data. They're asking you a question — answer it using the data provided.
+
+CONTEXT:
+- You have their recent glucose readings, daily stats, and detected patterns.
+- Use plain time formats: "this afternoon", "around 2 PM", "overnight". Never ISO timestamps.
+- Reference their actual data when relevant.
+
+SAFETY:
+- You are NOT a doctor. Never diagnose or prescribe medication.
+- Use casual hedging when giving suggestions: "might help", "worth trying", "could be worth a look".
+- If they ask about medication adjustments, remind them to check with their care team.
+
+Keep your answer conversational and helpful. Match the depth of your response to the complexity of their question.`;
+
 // Simple in-memory rate limiting: max 20 asks per user per day
 const rateLimitMap = new Map<string, number>();
 
@@ -139,7 +153,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       model: config.openai.model,
       max_completion_tokens: 4096,
       messages: [
-        { role: 'system', content: QUICKASK_SYSTEM_PROMPT },
+        { role: 'system', content: isPrefire ? QUICKASK_SYSTEM_PROMPT : CUSTOM_SYSTEM_PROMPT },
         { role: 'user', content: JSON.stringify(promptData) },
         { role: 'user', content: userQuestion },
       ],
