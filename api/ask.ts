@@ -85,9 +85,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ],
     });
 
+    console.log('QuickAsk OpenAI response:', JSON.stringify({
+      finishReason: response.choices[0]?.finish_reason,
+      hasContent: !!response.choices[0]?.message?.content,
+      contentLength: response.choices[0]?.message?.content?.length,
+      refusal: response.choices[0]?.message?.refusal,
+      usage: response.usage,
+    }));
+
     const answer = response.choices[0]?.message?.content;
     if (!answer) {
-      throw new Error('No response from AI');
+      throw new Error(`No response from AI (finish_reason: ${response.choices[0]?.finish_reason}, refusal: ${response.choices[0]?.message?.refusal})`);
     }
 
     console.log(`QuickAsk [${questionKey}] (${response.usage?.total_tokens ?? 0} tokens)`);
