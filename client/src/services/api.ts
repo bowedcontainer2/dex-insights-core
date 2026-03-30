@@ -69,14 +69,25 @@ export async function disconnectDexcom(): Promise<void> {
   await fetchJSON('/api/dexcom/disconnect', { method: 'POST' });
 }
 
-export async function askQuestion(questionKey: QuickAskKey, timezone?: string): Promise<QuickAskResponse> {
+export async function askQuestion(questionKey: QuickAskKey): Promise<QuickAskResponse> {
   if (USE_MOCK) {
     return { answer: 'Mock answer — connect your Dexcom to get real AI-powered insights about your glucose data.', questionKey };
   }
   return fetchJSON<QuickAskResponse>('/api/ask', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ questionKey, timezone: timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone }),
+    body: JSON.stringify({ questionKey }),
+  });
+}
+
+export async function askCustomQuestion(customQuery: string): Promise<QuickAskResponse> {
+  if (USE_MOCK) {
+    return { answer: 'Mock answer — connect your Dexcom to get real AI-powered insights about your glucose data.', questionKey: 'custom' as any };
+  }
+  return fetchJSON<QuickAskResponse>('/api/ask', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ customQuery }),
   });
 }
 

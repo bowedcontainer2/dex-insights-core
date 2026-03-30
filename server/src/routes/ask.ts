@@ -101,23 +101,29 @@ function checkRateLimit(): boolean {
 
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { questionKey } = req.body ?? {};
-    if (!questionKey || !VALID_KEYS.includes(questionKey)) {
-      return res.status(400).json({ error: 'Invalid questionKey' });
+    const { questionKey, customQuery } = req.body ?? {};
+
+    const isPrefire = questionKey && VALID_KEYS.includes(questionKey);
+    const isCustom = typeof customQuery === 'string' && customQuery.trim().length > 0;
+    if (!isPrefire && !isCustom) {
+      return res.status(400).json({ error: 'Provide a valid questionKey or customQuery' });
     }
 
     if (!checkRateLimit()) {
       return res.status(429).json({ error: 'Daily question limit reached. Try again tomorrow.' });
     }
 
-    const promptData = buildQuickAskData(questionKey as QuickAskKey);
+    const dataKey = isPrefire ? (questionKey as QuickAskKey) : 'spike_normal';
+    const promptData = buildQuickAskData(dataKey);
 
     if (promptData.readings.length === 0) {
       return res.json({
         answer: 'No glucose data available yet. Connect your Dexcom and check back once readings start flowing in.',
-        questionKey,
+        questionKey: questionKey ?? 'custom',
       });
     }
+
+    const userQuestion = isPrefire ? QUESTIONS[questionKey as QuickAskKey] : customQuery!.trim();
 
     const client = new OpenAI({ apiKey: config.openai.apiKey });
 
@@ -127,7 +133,7 @@ router.post('/', async (req: Request, res: Response) => {
       messages: [
         { role: 'system', content: QUICKASK_SYSTEM_PROMPT },
         { role: 'user', content: JSON.stringify(promptData) },
-        { role: 'user', content: QUESTIONS[questionKey as QuickAskKey] },
+        { role: 'user', content: userQuestion },
       ],
     });
 
@@ -136,9 +142,9 @@ router.post('/', async (req: Request, res: Response) => {
       throw new Error('No response from AI');
     }
 
-    console.log(`QuickAsk [${questionKey}] (${response.usage?.total_tokens ?? 0} tokens)`);
+    console.log(`QuickAsk [${questionKey ?? 'custom'}] (${response.usage?.total_tokens ?? 0} tokens)`);
 
-    res.json({ answer, questionKey });
+    res.json({ answer, questionKey: questionKey ?? 'custom' });
   } catch (err) {
     console.error('QuickAsk error:', err);
     res.status(500).json({ error: 'Failed to get answer' });

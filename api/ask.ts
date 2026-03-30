@@ -107,23 +107,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const userId = await requireAuth(req);
 
-    const { questionKey } = req.body ?? {};
-    if (!questionKey || !VALID_KEYS.includes(questionKey)) {
-      return res.status(400).json({ error: 'Invalid questionKey' });
+    const { questionKey, customQuery } = req.body ?? {};
+
+    // Must provide either a valid questionKey or a customQuery string
+    const isPrefire = questionKey && VALID_KEYS.includes(questionKey);
+    const isCustom = typeof customQuery === 'string' && customQuery.trim().length > 0;
+    if (!isPrefire && !isCustom) {
+      return res.status(400).json({ error: 'Provide a valid questionKey or customQuery' });
     }
 
     if (!checkRateLimit(userId)) {
       return res.status(429).json({ error: 'Daily question limit reached. Try again tomorrow.' });
     }
 
-    const promptData = await buildQuickAskData(userId, questionKey as QuickAskKey);
+    // For prefire buttons use tailored data window; for custom queries use 24hr + 7 days context
+    const dataKey = isPrefire ? (questionKey as QuickAskKey) : 'spike_normal';
+    const promptData = await buildQuickAskData(userId, dataKey);
 
     if (promptData.readings.length === 0) {
       return res.json({
         answer: 'No glucose data available yet. Connect your Dexcom and check back once readings start flowing in.',
-        questionKey,
+        questionKey: questionKey ?? 'custom',
       });
     }
+
+    const userQuestion = isPrefire ? QUESTIONS[questionKey as QuickAskKey] : customQuery!.trim();
 
     const client = new OpenAI({ apiKey: config.openai.apiKey });
 
@@ -133,26 +141,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       messages: [
         { role: 'system', content: QUICKASK_SYSTEM_PROMPT },
         { role: 'user', content: JSON.stringify(promptData) },
-        { role: 'user', content: QUESTIONS[questionKey as QuickAskKey] },
+        { role: 'user', content: userQuestion },
       ],
     });
-
-    console.log('QuickAsk OpenAI response:', JSON.stringify({
-      finishReason: response.choices[0]?.finish_reason,
-      hasContent: !!response.choices[0]?.message?.content,
-      contentLength: response.choices[0]?.message?.content?.length,
-      refusal: response.choices[0]?.message?.refusal,
-      usage: response.usage,
-    }));
 
     const answer = response.choices[0]?.message?.content;
     if (!answer) {
       throw new Error(`No response from AI (finish_reason: ${response.choices[0]?.finish_reason}, refusal: ${response.choices[0]?.message?.refusal})`);
     }
 
-    console.log(`QuickAsk [${questionKey}] (${response.usage?.total_tokens ?? 0} tokens)`);
+    console.log(`QuickAsk [${questionKey ?? 'custom'}] (${response.usage?.total_tokens ?? 0} tokens)`);
 
-    res.json({ answer, questionKey });
+    res.json({ answer, questionKey: questionKey ?? 'custom' });
   } catch (err: any) {
     if (err instanceof AuthError) {
       return res.status(err.status).json({ error: err.message });
