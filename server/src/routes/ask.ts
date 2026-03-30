@@ -49,12 +49,7 @@ function buildQuickAskData(questionKey: QuickAskKey) {
   const dailyStats = getDailyStatsByRange(statsStart, today);
   const patternEvents = getPatternEventsByRange(statsStart, today);
 
-  const compactReadings = readings.map((r) => ({
-    v: r.value,
-    t: r.trend,
-    r: r.trend_rate,
-    ts: r.system_time,
-  }));
+  const compactReadings = readings.map((r) => [r.value, r.system_time] as const);
 
   return {
     currentTime: now.toISOString(),

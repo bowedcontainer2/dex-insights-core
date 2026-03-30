@@ -48,12 +48,7 @@ async function buildQuickAskData(userId: string, questionKey: QuickAskKey) {
     getPatternEventsByRange(userId, statsStart, today),
   ]);
 
-  const compactReadings = readings.map((r) => ({
-    v: r.value,
-    t: r.trend,
-    r: r.trend_rate,
-    ts: r.system_time,
-  }));
+  const compactReadings = readings.map((r) => [r.value, r.system_time] as const);
 
   return {
     currentTime: now.toISOString(),

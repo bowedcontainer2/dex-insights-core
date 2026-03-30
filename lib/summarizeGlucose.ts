@@ -1,15 +1,11 @@
 import type { PatternEvent, DailyStats } from '../shared/types.js';
 
-interface CompactReading {
-  v: number;
-  t: string;
-  r: number | null;
-  ts: string;
-}
+// [value, timestamp] tuple
+type Reading = readonly [number, string];
 
 interface GlucoseData {
   currentTime: string;
-  readings: CompactReading[];
+  readings: Reading[];
   dailyStats: DailyStats[];
   patternEvents: PatternEvent[];
 }
@@ -53,8 +49,7 @@ export function summarizeGlucoseData(data: GlucoseData): string {
   // Current reading
   if (data.readings.length > 0) {
     const latest = data.readings[data.readings.length - 1];
-    const trendWord = describeTrend(latest.t);
-    lines.push(`Right now: ${latest.v} mg/dL, ${trendWord}.`);
+    lines.push(`Right now: ${latest[0]} mg/dL.`);
   }
 
   // Today's stats (most recent day in dailyStats)
@@ -84,39 +79,26 @@ export function summarizeGlucoseData(data: GlucoseData): string {
   return lines.join('\n');
 }
 
-function describeTrend(trend: string): string {
-  switch (trend) {
-    case 'doubleUp': return 'rising fast';
-    case 'singleUp': return 'rising';
-    case 'fortyFiveUp': return 'rising slightly';
-    case 'flat': return 'steady';
-    case 'fortyFiveDown': return 'dropping slightly';
-    case 'singleDown': return 'dropping';
-    case 'doubleDown': return 'dropping fast';
-    default: return 'trend unknown';
-  }
-}
-
-function summarizeTrajectory(readings: CompactReading[]): string | null {
-  // Group readings into ~2 hour blocks and describe the arc
+function summarizeTrajectory(readings: Reading[]): string | null {
+  // Group readings into ~3 hour blocks and describe the arc
   const blocks: { label: string; avg: number; min: number; max: number; count: number }[] = [];
   let currentBlock: typeof blocks[0] | null = null;
   let currentBlockHour = -1;
 
-  for (const r of readings) {
-    const hour = new Date(r.ts).getUTCHours();
-    const blockIndex = Math.floor(hour / 3); // 3-hour blocks
+  for (const [value, ts] of readings) {
+    const hour = new Date(ts).getUTCHours();
+    const blockIndex = Math.floor(hour / 3);
 
     if (blockIndex !== currentBlockHour) {
       if (currentBlock) blocks.push(currentBlock);
       currentBlockHour = blockIndex;
       const blockStart = blockIndex * 3;
       const label = timeBlock(blockStart);
-      currentBlock = { label, avg: r.v, min: r.v, max: r.v, count: 1 };
+      currentBlock = { label, avg: value, min: value, max: value, count: 1 };
     } else if (currentBlock) {
-      currentBlock.avg = (currentBlock.avg * currentBlock.count + r.v) / (currentBlock.count + 1);
-      currentBlock.min = Math.min(currentBlock.min, r.v);
-      currentBlock.max = Math.max(currentBlock.max, r.v);
+      currentBlock.avg = (currentBlock.avg * currentBlock.count + value) / (currentBlock.count + 1);
+      currentBlock.min = Math.min(currentBlock.min, value);
+      currentBlock.max = Math.max(currentBlock.max, value);
       currentBlock.count++;
     }
   }
