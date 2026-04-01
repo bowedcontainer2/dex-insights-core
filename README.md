@@ -2,7 +2,7 @@
 
 **AI-powered glucose insights for people who actually live with diabetes.**
 
-DayArc connects to your Dexcom CGM and gives you something Dexcom doesn't — a companion that understands your data and talks to you about it like a person, not a dashboard.
+DayArc connects to your Dexcom CGM and gives you something Dexcom doesn't — a companion that understands your data and talks to you about it without judgement.
 
 ![DayArc dashboard — current glucose, today's read, and Ask DayArc](docs/dashboard-top.png)
 
