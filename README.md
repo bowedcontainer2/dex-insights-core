@@ -4,6 +4,10 @@
 
 DayArc connects to your Dexcom CGM and gives you something Dexcom doesn't — a companion that understands your data and talks to you about it like a person, not a dashboard.
 
+![DayArc dashboard — current glucose, today's read, and Ask DayArc](docs/dashboard-top.png)
+
+![24-hour chart, TIR bar, actionable insights, and pattern detection](docs/dashboard-bottom.png)
+
 ## What it does
 
 - **Real-time glucose monitoring** — your current reading, trend, and a 24-hour chart
